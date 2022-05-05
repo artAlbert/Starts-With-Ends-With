@@ -11,8 +11,15 @@ import json
 app = Flask(__name__)
 
 def connect_to_database():
+    """Establishes a connection with the database
 
-    # Establish connection with the database
+    Args: 
+        none
+
+    Returns:
+        conn (object): connection to the PostgreSQL database instance 
+    """
+
     conn = psycopg2.connect(host='localhost',
                             database='endsWith',
                             user="postgres",
@@ -22,7 +29,16 @@ def connect_to_database():
 
 
 def execute_query(conn, SQL, data):
+    """Executes a database query and fetch the results
+
+    Args:
+        conn (object): connection to the PostgreSQL database instance 
+        SQL (str): the query string with argument parameters
+        data (tuple): variables to match the parameters in the SQL query string
     
+    Returns:
+        searchResults (List[(tuples)]): results from the database query
+    """
     # Execute query
     cur = conn.cursor()
     cur.execute(SQL, data)
@@ -38,7 +54,33 @@ def execute_query(conn, SQL, data):
 
 
 def build_response(searchResults):
+    """Creates the JSON response from the query results
+    
+    Builds a dictionary structure from the database results where the 'count' key is
+    the number of matches, and the 'words' key is a list of dictionaries containing the
+    words and their meanings. The dictionary is serialized into JSON and returned.
 
+    Example:
+        {
+            'count': 2,
+            'words': [
+                {
+                    'word': 'potato',
+                    'meaning': "vegetable"
+                },
+                {
+                    'word': 'tomato',
+                    'meaning': "fruit"
+                }
+            ]
+        }
+
+    Args:
+        searchResults (List[(tuples)]): results from a database query
+
+    Returns:
+        responseJson (dict): serialized dictionary containing the query data
+    """
     responseDict = {
         "count": 0,
         "words": []
@@ -48,6 +90,7 @@ def build_response(searchResults):
 
     for tuple in searchResults:
         wordPairing = {
+            # .lower() is called because the words stored in the database are initialized
             "word" : str(tuple[0]).lower(),
             "meaning" : tuple[1]
         }
@@ -62,16 +105,25 @@ def build_response(searchResults):
     return responseJson
 
 
-# Match words which begin and end with the same letter.
 @app.route("/starts-and-ends-with")
 def startsAndEndsWith():
+    """Match words which begin and end with the same letter.
+
+    Args:
+        None
+
+    Returns:
+        responseJson (dict): serialized dictionary containing words that start
+        and end with the same letter, and their meanings.
+    """
 
     # Get the starts-with and ends-with character
     letter = request.args.get('letter', default = 'a', type = str)
     
     # Build query
     SQL = "SELECT word, meaning FROM oedict WHERE word ~ (%s);"
-    data = ("^" + letter.upper() + ".*" + letter + "$", )
+
+    data = ("^" + letter.upper() + ".*" + letter.lower() + "$", )
 
     # Connect to database
     conn = connect_to_database()
@@ -88,6 +140,16 @@ def startsAndEndsWith():
 # Match words which begin with one letter and end with another.
 @app.route("/starts-with-ends-with")
 def startsWithEndsWith():
+    """Match words which begin with the given 'first' letter , and end 
+    with the given 'last' letter.
+
+    Args:
+        None
+
+    Returns:
+        responseJson (dict): serialized dictionary containing words that start
+        with letter 'first' and end with letter 'last', and their meanings.
+    """
 
     # Get the starting and the ending characters
     first = request.args.get('first', default = 'a', type = str)
