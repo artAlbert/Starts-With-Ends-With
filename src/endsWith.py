@@ -1,3 +1,4 @@
+from distutils.command.build import build
 from email.policy import default
 from urllib import response
 from flask import Flask
@@ -9,13 +10,18 @@ import json
 
 app = Flask(__name__)
 
-def connect_to_database_and_execute(SQL, data):
+def connect_to_database():
 
     # Establish connection with the database
     conn = psycopg2.connect(host='localhost',
                             database='endsWith',
                             user="postgres",
                             password="adminAdmin123!")
+    
+    return conn
+
+
+def execute_query(conn, SQL, data):
     
     # Execute query
     cur = conn.cursor()
@@ -31,6 +37,31 @@ def connect_to_database_and_execute(SQL, data):
     return searchResults
 
 
+def build_response(searchResults):
+
+    responseDict = {
+        "count": 0,
+        "words": []
+    }
+
+    wordList = responseDict["words"]
+
+    for tuple in searchResults:
+        wordPairing = {
+            "word" : str(tuple[0]).lower(),
+            "meaning" : tuple[1]
+        }
+        wordList.append(wordPairing)  
+
+    wordListSize = len(wordList)
+    responseDict["count"] = wordListSize
+
+    # JSON-ify
+    responseJson = json.dumps(responseDict, indent = 4)
+
+    return responseJson
+
+
 # Match words which begin and end with the same letter.
 @app.route("/starts-and-ends-with")
 def startsAndEndsWith():
@@ -42,34 +73,21 @@ def startsAndEndsWith():
     SQL = "SELECT word, meaning FROM oedict WHERE word ~ (%s);"
     data = ("^" + letter.upper() + ".*" + letter + "$", )
 
-    # Get database results
-    queryData = connect_to_database_and_execute(SQL, data)
+    # Connect to database
+    conn = connect_to_database()
+
+    # Execute query
+    searchResults = execute_query(conn, SQL, data)
 
     # Build response
-    responseDict = {
-        "count": 0,
-        "words": []
-    }
-    wordCounter = 0
-    wordList = responseDict["words"]
-    for tuple in queryData:
-        wordPairing = {
-            "word" : str(tuple[0]).lower(),
-            "meaning" : tuple[1]
-        }
-        wordCounter += 1
-        wordList.append(wordPairing)    
-    responseDict["count"] = wordCounter
-
-    # JSON-ify
-    responseJson = json.dumps(responseDict, indent = 4)
+    responseJson = build_response(searchResults)
 
     return responseJson
 
 
 # Match words which begin with one letter and end with another.
 @app.route("/starts-with-ends-with")
-def startsWithendsWith():
+def startsWithEndsWith():
 
     # Get the starting and the ending characters
     first = request.args.get('first', default = 'a', type = str)
@@ -79,28 +97,15 @@ def startsWithendsWith():
     SQL = "SELECT word, meaning FROM oedict WHERE word ~ (%s);"
     data = ("^" + first.upper() + ".*" + last + "$", )
 
-    # Get database results
-    queryData = connect_to_database_and_execute(SQL, data)
+    # Connect to database
+    conn = connect_to_database()
+
+    # Execute query
+    searchResults = execute_query(conn, SQL, data)
 
     # Build response
-    responseDict = {
-        "count": 0,
-        "words": []
-    }
-    wordCounter = 0
-    wordList = responseDict["words"]
-    for tuple in queryData:
-        wordPairing = {
-            "word" : str(tuple[0]).lower(),
-            "meaning" : tuple[1]
-        }
-        wordCounter += 1
-        wordList.append(wordPairing)
-    responseDict["count"] = wordCounter
+    responseJson = build_response(searchResults)
 
-    # JSON-ify
-    responseJson = json.dumps(responseDict, indent = 4)
-    
     return responseJson
     
 
