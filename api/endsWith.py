@@ -58,17 +58,22 @@ def build_response(searchResults):
     
     Builds a dictionary structure from the database results where the 'count' key is
     the number of matches, and the 'words' key is a list of dictionaries containing the
-    words and their meanings. The dictionary is serialized into JSON and returned.
+    database rows (unique id, letter, word, meaning). The dictionary is serialized into 
+    JSON and returned.
 
     Example:
         {
             'count': 2,
             'words': [
                 {
+                    'word_id' : '1',
+                    'letter': 'p',
                     'word': 'potato',
                     'meaning': "vegetable"
                 },
                 {
+                    'word_id': '2',
+                    'letter' : 't',
                     'word': 'tomato',
                     'meaning': "fruit"
                 }
@@ -90,9 +95,11 @@ def build_response(searchResults):
 
     for tuple in searchResults:
         wordPairing = {
-            # .lower() is called because the words stored in the database are initialized
-            "word" : str(tuple[0]).lower(),
-            "meaning" : tuple[1]
+            # .lower() is called because the words stored in the database are capitalized.
+            "word_id": tuple[0],
+            "letter": tuple[1],
+            "word" : str(tuple[2]).lower(),
+            "meaning" : tuple[3]
         }
         wordList.append(wordPairing)  
 
@@ -121,7 +128,7 @@ def startsAndEndsWith():
     letter = request.args.get('letter', default = 'a', type = str)
     
     # Build query
-    SQL = "SELECT word, meaning FROM oedict WHERE word ~ (%s);"
+    SQL = "SELECT * FROM oedict WHERE word ~ (%s);"
 
     data = ("^" + letter.upper() + ".*" + letter.lower() + "$", )
 
@@ -156,7 +163,7 @@ def startsWithEndsWith():
     last = request.args.get('last', default = 'a', type = str)
 
     # Build query
-    SQL = "SELECT word, meaning FROM oedict WHERE word ~ (%s);"
+    SQL = "SELECT * FROM oedict WHERE word ~ (%s);"
     data = ("^" + first.upper() + ".*" + last + "$", )
 
     # Connect to database

@@ -22,7 +22,7 @@ export default class FetchWords extends React.Component {
                     : <div>
                         Matches: {this.state.wordCount}
                         {this.state.words.map(wordPair => (
-                            <div>
+                            <div key={wordPair.word_id}>
                                 <div> {wordPair.word} : {wordPair.meaning} </div>
                             </div>
                         ))}
