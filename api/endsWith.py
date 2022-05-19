@@ -129,7 +129,7 @@ def startsAndEndsWith():
     letter = request.args.get('letter', default = 'a', type = str)
     
     # Build query
-    SQL = "SELECT * FROM oedict WHERE word ~ (%s);"
+    SQL = "SELECT * FROM word_dict WHERE word ~ (%s);"
 
     data = ("^" + letter.upper() + ".*" + letter.lower() + "$", )
 
@@ -164,7 +164,7 @@ def startsWithEndsWith():
     last = request.args.get('last', default = 'a', type = str)
 
     # Build query
-    SQL = "SELECT * FROM oedict WHERE word ~ (%s);"
+    SQL = "SELECT * FROM word_dict WHERE word ~ (%s);"
     data = ("^" + first.upper() + ".*" + last + "$", )
 
     # Connect to database
