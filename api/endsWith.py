@@ -20,10 +20,11 @@ def connect_to_database():
         conn (object): connection to the PostgreSQL database instance 
     """
 
-    conn = psycopg2.connect(host='localhost',
-                            database='endsWith',
+    conn = psycopg2.connect(host='endswith-database.c45o7sam5gki.us-east-1.rds.amazonaws.com',
+                            database='word_db',
                             user="postgres",
-                            password="adminAdmin123!")
+                            password="adminAdmin123!",
+                            port="5432")
     
     return conn
 

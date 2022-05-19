@@ -6,10 +6,8 @@ export default class PostForm extends React.Component {
     state = {
 
         userInput: "",
-
         firstLetter: "",
         lastLetter: "",
-
         firstEqualsLast: this.props.firstEqualsLast,
 
     };

@@ -9,6 +9,7 @@ export default class FetchWords extends React.Component {
     };
         
     async componentDidMount() {
+        //Initialize variables
         var firstInput = this.props.firstLetter;
         var lastInput = this.props.lastLetter;
         var url = "";
@@ -17,6 +18,7 @@ export default class FetchWords extends React.Component {
         if (this.props.firstEqualsLast) {
             //valid input
             if (firstInput.trim() != "") {
+                //POST request to API and 
                 url = `/starts-and-ends-with?letter=${firstInput}`
                 const response = await fetch(url);
                 const data = await response.json();
