@@ -37,6 +37,6 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://main.djf9hwudvwist.amplifyapp.com",
+  "proxy": "https://flask-service.6bfcrl4vtikjs.us-east-2.cs.amazonlightsail.com/",
   "packageManager": "yarn@3.2.0"
 }
