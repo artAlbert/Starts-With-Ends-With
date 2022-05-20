@@ -37,6 +37,6 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://flask-service.6bfcrl4vtikjs.us-east-2.cs.amazonlightsail.com/",
+  "proxy": "http://localhost:5000",
   "packageManager": "yarn@3.2.0"
 }

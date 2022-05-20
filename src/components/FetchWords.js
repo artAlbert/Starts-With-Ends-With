@@ -19,7 +19,7 @@ export default class FetchWords extends React.Component {
             //valid input
             if (firstInput.trim() != "") {
                 //POST request to API and 
-                url = `/starts-and-ends-with?letter=${firstInput}`
+                url = `https://flask-service.6bfcrl4vtikjs.us-east-2.cs.amazonlightsail.com/starts-and-ends-with?letter=${firstInput}`
                 const response = await fetch(url);
                 const data = await response.json();
                 this.setState({ noInput: false, words: data.words, wordCount: data.count});
@@ -29,7 +29,7 @@ export default class FetchWords extends React.Component {
         else {
             //valid input
             if (firstInput.trim() != "" && lastInput.trim() != "") {
-                url = `/starts-with-ends-with?first=${firstInput}&last=${lastInput}`
+                url = `https://flask-service.6bfcrl4vtikjs.us-east-2.cs.amazonlightsail.com/starts-with-ends-with?first=${firstInput}&last=${lastInput}`
                 const response = await fetch(url);
                 const data = await response.json();
                 this.setState({ noInput: false, words: data.words, wordCount: data.count});
