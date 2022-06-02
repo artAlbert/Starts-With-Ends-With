@@ -1,6 +1,7 @@
 # Starts With Ends With
 Project Links: [React frontend](https://main.djf9hwudvwist.amplifyapp.com) || [Flask backend](https://flask-service.a1cqh1bc24r90.us-east-1.cs.amazonlightsail.com) ||
-Built with React, Flask, and PostgreSQL
+
+Built with React (hosted on AWS Amplify), Flask (hosted on Amazon Lightsail), and PostgreSQL (hosted on AWS RDS)
 
 ![FacebookTeaser2](https://user-images.githubusercontent.com/103860612/171473732-6398c073-db43-450e-b11d-d48cbfadc5bd.jpg)
 
