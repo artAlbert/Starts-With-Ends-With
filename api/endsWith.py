@@ -127,6 +127,11 @@ def startsAndEndsWith():
 
     # Get the starts-with and ends-with character
     letter = request.args.get('letter', default = 'a', type = str)
+
+    # Check input
+    if len(letter) > 1:
+        # Return error without executing a search in database
+        return ("""{ "errors": [{"code":211, "message":"Incorrect input length"}]}""")
     
     # Build query
     SQL = "SELECT * FROM word_dict WHERE word ~ (%s);"
@@ -162,6 +167,11 @@ def startsWithEndsWith():
     # Get the starting and the ending characters
     first = request.args.get('first', default = 'a', type = str)
     last = request.args.get('last', default = 'a', type = str)
+
+    # Check input
+    if len(first) or len(last) > 1:
+        # Return error without executing a search in database
+        return ("""{ "errors": [{"code":211, "message":"Incorrect input length"}]}""")
 
     # Build query
     SQL = "SELECT * FROM word_dict WHERE word ~ (%s);"
